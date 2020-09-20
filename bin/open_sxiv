@@ -1,0 +1,5 @@
+geometry1="375x350+250+200"
+geometry2="375x350+650+200"
+geometry=$geometry2
+close_sxiv
+screen -dmS sxiv sxiv -g $geometry "$@"

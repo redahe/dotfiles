@@ -1,0 +1,10 @@
+#!/bin/bash
+echo $1
+dpath=$(realpath "$1")
+echo $dpath
+# Delete current input to buffer
+tmux send-keys -t integrated.1 Escape ddi
+# Change directory
+tmux send-keys -t integrated.1 cd Space \'"$dpath"\' Enter
+# Go to the pane
+tmux select-pane -t integrated.1

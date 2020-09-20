@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function create_session {
+	tmux new-session -d -s integrated screen -RS vim vim
+	tmux split-window -h bash
+	tmux -2 attach-session -d
+}
+
+tmux -2 attach -t integrated || create_session

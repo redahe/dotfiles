@@ -1,0 +1,1 @@
+tmux popup -R vifm -K -E -w 65% -h 65%

@@ -1,0 +1,4 @@
+#!/bin/bash
+     
+fpath=`realpath $1`
+tmux send-keys -t integrated.2 "sxiv $fpath" Enter

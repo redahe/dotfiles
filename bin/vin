@@ -1,0 +1,11 @@
+#!/bin/bash
+
+fpath=`realpath $1`
+
+if ! screen -list | grep -q "vim"; then
+        echo No vim session, creating new.
+	screen -RS vim vim $fpath
+else
+	screen -S vim -X stuff ":e $fpath^M"
+        echo File is sent to the opened vim session.
+fi
