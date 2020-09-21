@@ -46,6 +46,7 @@ set scrolloff=5	                  " Scroll when # of line to the top/bottom
 set guioptions-=T                 " in gVim remove toolbar
 set tabstop=8                     " Tab looks 8 spaces wide
 set smarttab                      " replace tab with spaces
+set hidden                        " Allow switching of buffers without saving
 
 " ---- Custom key bindings
 
@@ -55,6 +56,8 @@ nmap <C-k> :bp<CR>                " Previous buffer
 nmap <C-l> :bn<CR>                " Next buffer
 nmap <C-j> :bn<CR>                " Next buffer
 nmap <C-x> :bd<CR>                " Close buffer
+
+nmap <C-f> :!fmin %:p:h<CR>           " Open file manager where the current buffer is
 
 " --- UI Highlights
 highlight MatchParen ctermfg=blue ctermbg=None " avoid 'cursor jumping' effect 
