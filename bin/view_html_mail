@@ -3,8 +3,7 @@
 TMP_DIR=`mktemp -d`
 
 function cleanup {      
-  # rm -rf "$TMP_DIR"
-  echo "Deleted temp directory $TMP_DIR"
+  rm -rf "$TMP_DIR"
 }
 
 trap cleanup EXIT
