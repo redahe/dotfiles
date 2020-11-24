@@ -1,0 +1,13 @@
+#!/bin/bash
+
+TMP_DIR=`mktemp -d`
+
+function cleanup {      
+  # rm -rf "$TMP_DIR"
+  echo "Deleted temp directory $TMP_DIR"
+}
+
+trap cleanup EXIT
+
+mhonarc --attachmentdir $TMP_DIR -single > $TMP_DIR/message.html
+w3m  "${TMP_DIR}/message.html"
