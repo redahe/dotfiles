@@ -12,13 +12,18 @@
 set $mod Mod4
 
 #MY SETTINGS
-exec --no-startup-id xss-lock -- i3lock
-exec --no-startup-id feh --bg-scale ~/wallpapers/cr.jpg
+exec --no-startup-id xss-lock -l -- i3lock
+exec --no-startup-id feh --bg-scale ~/wallpapers/mononoke.jpg
 exec --no-startup-id nm-applet
 exec --no-startup-id "setxkbmap -model pc105 -layout us,ru -option grp:ctrl_shift_toggle"
+exec_always --no-startup-id compton --config /home/reda/.compton.conf
 exec --no-startup-id udiskie -ans &
-# split in horizontal orientation
-bindsym $mod+g split h
+for_window [class="^.*"] border pixel 1
+new_window 1pixel
+
+bindsym $mod+Shift+g split v
+bindsym $mod+Shift+v split h
+
 #
 # change focus
 bindsym $mod+h focus left
@@ -36,7 +41,11 @@ bindsym $mod+p exec scrot -e 'mv $f ~/screenshots/'
 bindsym $mod+o exec --no-startup-id /home/reda/scripts/open_link.sh
 bindsym $mod+b exec --no-startup-id /home/reda/scripts/open_bookmark.sh
 
+for_window [title="Perfect Mono"] floating enable
+# for_window [title="open_notes"] floating enable
+for_window [title="file_manager"] floating enable
 for_window [class="Sxiv"] floating enable
+for_window [class="Surf"] floating enable
 no_focus [class="Sxiv"]
 
 bindsym Mod1+Tab workspace next
@@ -65,7 +74,10 @@ floating_modifier $mod
 # start a terminal
 #bindsym $mod+Return exec i3-sensible-terminal
 #bindsym $mod+Return exec urxvt
-bindsym $mod+Return exec mlterm
+bindsym $mod+Return exec mlterm -e tmux -2
+bindsym $mod+v exec mlterm -e bash -c ovin
+bindsym $mod+n exec mlterm -N open_notes -e open_notes
+bindsym $mod+m exec mlterm --geometry "100x32" -N file_manager -e vifm
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -89,9 +101,6 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-
-# split in vertical orientation
-bindsym $mod+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle

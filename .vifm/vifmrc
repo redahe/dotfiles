@@ -277,8 +277,9 @@ filextype *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
         \ sxiv,
         \ {View in gpicview}
         \ gpicview %c,
-fileviewer *.jpg,*.png open_sxiv %c %pc close_sxiv
-" fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm convert -identify %f -verbose /dev/null
+
+fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
+        \ img2sixel --width=`expr %pw \* 8` %c %pd
 
 " MD5
 filetype *.md5

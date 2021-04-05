@@ -12,7 +12,7 @@ call vundle#begin('~/build/vimplugins') " keep plugins in build dir
 	Plugin 'roxma/vim-tmux-clipboard'           " sync vimand tmux copy buffers
 	Plugin 'vim-syntastic/syntastic'            " Syntax errors
 	Plugin 'tpope/vim-dispatch'                 " Dispatch make to parallel tmux window
-	Plugin 'NLKNguyen/papercolor-theme'         " Paper color theme
+	Plugin 'vimwiki/vimwiki'                    
 
 
 call vundle#end()            " required
@@ -22,8 +22,7 @@ call vundle#end()            " required
 set t_Co=256                      " Support 256 colors
 
 colorscheme PaperColor              " Color Scheme
-set background=light                " Default background mode (light/dark)
-redraw!                             " Need when run in screen from tmux
+set background=dark                 " Default background mode (light/dark)
 
 nnoremap <F6> :let &bg=(&bg=='light'?'dark':'light')<cr>  " toggle bg lighnes
 
@@ -31,7 +30,6 @@ let g:airline_theme='zenburn'     " Status line theme
 let g:airline_powerline_fonts = 1 " Use fancy symbols in status line
 let g:airline#extensions#tabline#enabled = 1 " show buffers
 map <F3> :NERDTreeToggle<CR>      " Open nerdtree on F3
-
 
 " ----------Settings--------------------------------------
 
@@ -59,6 +57,13 @@ set smarttab                      " replace tab with spaces
 set hidden                        " Allow change buffer without saving
 set cursorline                    " Highlight current line
 
+set synmaxcol=80                  " Vim syntax highlighting can be slow on long lines, limiting
+
+set foldlevel=99                  " Dont fold when open a file by default
+ 
+filetype plugin on
+syntax on
+
 " ---- Custom key bindings
 
 nmap <C-N> :set invnumber<CR>     " Show/hide line numbers
@@ -74,21 +79,24 @@ map  <F9> :Make <CR>              " Make is an improved version of 'make' from t
 map  <F10> :Make run <CR>         " Make run command
 
 " --- UI Highlights
+
 highlight MatchParen ctermfg=blue ctermbg=None " avoid 'cursor jumping' effect
 highlight LineNr ctermfg=DarkGrey ctermbg=None " line number highligh
 
 
 " --- Indents, tabs and line lenght for programming ---
-autocmd FileType python,c,cpp
+autocmd FileType python,c,cpp,go
                  \ highlight Excess ctermbg=DarkGrey guibg=Black
-autocmd FileType python,c,cpp match Excess /\%80v.*/ " Highlight > 80 column
-autocmd FileType python,c,cpp set nowrap             " Don't wrap lines in sources
+autocmd FileType python,c,cpp,go match Excess /\%80v.*/ " Highlight > 80 column
+autocmd FileType python,c,cpp,go,vimwiki set nowrap             " Don't wrap lines in sources
 
 autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8
 \ formatoptions+=croq softtabstop=4 smartindent
 \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
-autocmd FileType c setlocal expandtab shiftwidth=4 tabstop=8 softtabstop=4 smartindent
+autocmd FileType c,go setlocal expandtab shiftwidth=4 tabstop=8 softtabstop=4 smartindent
 " ----------------------------------------------------------
+" --------------- Email editing -----------------------
+autocmd BufNewFile,BufRead /tmp/neomutt* set noautoindent filetype=mail wm=0 tw=78 nonumber digraph nolist
 
 
 " ----syntastic settings - syntax check
@@ -100,3 +108,53 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 " let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+let g:syntastic_asm_checkers=['']    " I use 6502 assembler which is unsupported
+
+
+
+" ------ vimwiki settings ----------------------------------------------------
+let g:vimwiki_folding = 'custom'
+
+" Folding function from vimwiki doc for markdown
+"
+function! VimwikiFoldLevelCustom(lnum)
+    let pounds = strlen(matchstr(getline(a:lnum), '^#\+'))
+    if (pounds)
+      return '>' . pounds  " start a fold level
+   endif
+    if getline(a:lnum) =~? '\v^\s*$'
+      if (strlen(matchstr(getline(a:lnum + 1), '^#\+')))
+        return '-1' " don't fold last blank line before header
+      endif
+    endif
+    return '=' " return previous fold level
+endfunction
+
+augroup VimrcAuGroup
+    autocmd!
+    autocmd FileType vimwiki setlocal foldmethod=expr |
+      \ setlocal foldenable | set foldexpr=VimwikiFoldLevelCustom(v:lnum)
+augroup END
+
+" --------------------------------------------------------------------------
+
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
+let g:vimwiki_autowriteall = 0
+
+autocmd FileType vimwiki setlocal syntax=markdown
+autocmd FileType vimwiki setlocal foldlevel=1       " Fold ##-level headers
+"--------------------------------
+"
+" -- Fold text 
+
+function! MyFoldText()
+    return substitute(getline(v:foldstart),"^ *","",1). '...             ' 
+endfunction
+set foldtext=MyFoldText()
+
+" Conceal links
+autocmd Filetype markdown,vimwiki 
+\  syn region markdownLink matchgroup=markdownLinkDelimiter 
+\  start="(" end=")" keepend contained conceal contains=markdownUrl
