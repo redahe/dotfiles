@@ -1,21 +1,27 @@
 
 " ------------Plugins--------------------------
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin('~/build/vimplugins') " keep plugins in build dir
+call plug#begin('~/build/vimplugins') " keep plugins in build dir
 
-	Plugin 'VundleVim/Vundle.vim'
-	Plugin 'flazz/vim-colorschemes'             " Color Schemes
-	Plugin 'scrooloose/nerdtree' 	            " Project and file navigation
-	Plugin 'bling/vim-airline'   	    	    " Lean & mean status/tabline for vim
-	Plugin 'vim-airline/vim-airline-themes'     " vim-airline-themes
-	Plugin 'tmux-plugins/vim-tmux-focus-events' " required for vim-tmux integration
-	Plugin 'roxma/vim-tmux-clipboard'           " sync vimand tmux copy buffers
-	Plugin 'vim-syntastic/syntastic'            " Syntax errors
-	Plugin 'tpope/vim-dispatch'                 " Dispatch make to parallel tmux window
-	Plugin 'vimwiki/vimwiki'                    
+	Plug 'flazz/vim-colorschemes'               " Color Schemes
+	Plug 'scrooloose/nerdtree' 	            " Project and file navigation
+	Plug 'bling/vim-airline'   	 	    " Lean & mean status/tabline for vim
+	Plug 'vim-airline/vim-airline-themes'       " vim-airline-themes
 
+	Plug 'tmux-plugins/vim-tmux-focus-events'   " required for vim-tmux integration
+	Plug 'roxma/vim-tmux-clipboard'             " sync vimand tmux copy buffers
+	Plug 'tpope/vim-dispatch'                   " Dispatch make to parallel tmux window
 
-call vundle#end()            " required
+	Plug 'vimwiki/vimwiki'                    
+	Plug 'tools-life/taskwiki'                    
+
+        Plug 'rhysd/reply.vim', { 'on': ['Repl'] }  " Laucnh repls
+
+        Plug 'davidhalter/jedi-vim'                 " Python code completion (TODO) use lsp
+	Plug 'vim-syntastic/syntastic'              " Syntax errors (TODO) use lsp
+        Plug 'prabirshrestha/vim-lsp'               " LSP (code, completion etc).
+        Plug 'ervandew/supertab'                    " Tab key for completion
+	
+call plug#end()            " required
 
 
 "---------------Plugin Settings---------------------------
@@ -61,12 +67,14 @@ set synmaxcol=80                  " Vim syntax highlighting can be slow on long 
 
 set foldlevel=99                  " Dont fold when open a file by default
  
+set splitright                    " Open splits on the right
+
 filetype plugin on
 syntax on
 
 " ---- Custom key bindings
 
-nmap <C-N> :set invnumber<CR>     " Show/hide line numbers
+nmap <leader>n :set invnumber<CR>     " Show/hide line numbers
 nmap <C-h> :bp<CR>                " Previous buffer
 nmap <C-k> :bp<CR>                " Previous buffer
 nmap <C-l> :bn<CR>                " Next buffer
@@ -88,7 +96,7 @@ highlight LineNr ctermfg=DarkGrey ctermbg=None " line number highligh
 autocmd FileType python,c,cpp,go
                  \ highlight Excess ctermbg=DarkGrey guibg=Black
 autocmd FileType python,c,cpp,go match Excess /\%80v.*/ " Highlight > 80 column
-autocmd FileType python,c,cpp,go,vimwiki set nowrap             " Don't wrap lines in sources
+autocmd FileType python,c,cpp,go,vimwiki set nowrap     " Don't wrap lines in sources
 
 autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8
 \ formatoptions+=croq softtabstop=4 smartindent
@@ -131,11 +139,8 @@ function! VimwikiFoldLevelCustom(lnum)
     return '=' " return previous fold level
 endfunction
 
-augroup VimrcAuGroup
-    autocmd!
-    autocmd FileType vimwiki setlocal foldmethod=expr |
-      \ setlocal foldenable | set foldexpr=VimwikiFoldLevelCustom(v:lnum)
-augroup END
+autocmd FileType vimwiki setlocal foldmethod=expr |
+     \ setlocal foldenable | set foldexpr=VimwikiFoldLevelCustom(v:lnum)
 
 " --------------------------------------------------------------------------
 
@@ -158,3 +163,53 @@ set foldtext=MyFoldText()
 autocmd Filetype markdown,vimwiki 
 \  syn region markdownLink matchgroup=markdownLinkDelimiter 
 \  start="(" end=")" keepend contained conceal contains=markdownUrl
+
+" -------------REPL--------------------------------------------------
+nmap <leader>ro :Repl<CR>
+nmap <leader>rs :ReplSend<CR>
+vmap <leader>rs :ReplSend<CR>
+imap <leader>rs :ReplSend<CR>
+nmap <leader>rc :ReplStop<CR>
+" -------------------------------------------------------------------
+"
+"
+"  ---------LSP and Code Completion----------------------------------------
+set omnifunc=syntaxcomplete#Complete     " default omni completion
+
+set completeopt-=preview       "No documentation preview
+" let g:lsp_log_file = expand('~/vim-lsp.log')  for debuging LSP
+
+let g:lsp_signature_help_enabled = 0         " cause doesn't work on older vim
+let g:lsp_completion_documentation_enabled=0 " cause doesn't work on older vim
+let g:lsp_preview_float=0                    "no window from vim-lsp
+let g:lsp_preview_doubletap = 0              "no window from vim-lsp
+
+" highlight lspReference ctermbg=yellow guibg=yellow
+
+let g:SuperTabDefaultCompletionType="context"   " Enable filepath completion
+let g:SuperTabContextDefaultCompletionType="<c-x><c-o>" " Omni for rest
+
+"LSP for For C/C++
+if executable('clangd-10')
+  augroup lsp_clangd
+    autocmd!
+    autocmd User lsp_setup call lsp#register_server({
+                \ 'name': 'clangd-10',
+                \ 'cmd': {server_info->['clangd-10']},
+	        \ 'allowlist': ['c', 'cpp'],
+	        \ })
+    autocmd FileType c setlocal omnifunc=lsp#complete
+    autocmd FileType cpp setlocal omnifunc=lsp#complete
+  augroup end
+endif
+
+
+"LSP For R
+augroup vim_lsp_settings_r_languageserver
+  autocmd User lsp_setup call lsp#register_server({
+      \ 'name': 'r-languageserver',
+      \ 'cmd': {server_info->['R','--slave','-e','languageserver::run()']},
+      \ 'allowlist': ['r'],
+      \ })
+  autocmd FileType r setlocal omnifunc=lsp#complete
+augroup end
