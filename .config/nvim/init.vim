@@ -43,7 +43,15 @@ set foldlevel=99                  " Dont fold when open a file by default
 set splitright                    " Open splits on the right
 set cc=80                         " 80 column border
 set clipboard=unnamedplus         " using system clipboard
+set nowrap
+set expandtab 
+set shiftwidth=2 
+set tabstop=8 
+set softtabstop=8 
+set smartindent
 
+set notimeout
+set ttimeout
 
 filetype plugin on
 syntax on
@@ -62,7 +70,6 @@ let g:VimuxOrientation = "h"
 let g:VimuxHeight = "33"
 let g:VimuxCommandShell = 1
 let g:VimuxPromptString = "run>"
-
 "--------------Key bindings --------------------------------------------------
 nmap <space> <leader>
 imap <C-Space> <C-x><C-o>
@@ -94,10 +101,37 @@ nnoremap <Leader>rc :VimuxPromptCommand<CR>
 nnoremap <Leader>rr :VimuxRunLastCommand<CR>
 nnoremap <Leader>ri :VimuxInspectRunner<CR>
 " paste to runner
-nnoremap <Leader>rp :call VimuxSendText(@")<CR>
+nnoremap <Leader>rp  :call SendRegister2Vimux()<CR>
 " Enter current line in runner
-nnoremap <Leader>rl :call VimuxSendText(getline('.'))\|call VimuxSendKeys('enter')<CR>
+nnoremap <Leader>rl :call VimuxOpenRunner()\| call VimuxSendText(getline('.'))\|call VimuxSendKeys('enter')<CR>
 
+
+" Pre-send command
+function! PreSend2Vimux()
+  :call VimuxOpenRunner()
+  if &filetype == 'python'
+    " Assume Ipython repl
+     :call VimuxSendText('%cpaste')
+     :call VimuxSendKeys('enter')
+     sleep 50ms
+  endif
+endfunction
+
+function! AfterSend2Vimux()
+  if &filetype == 'python'
+    " Assume Ipython repl
+     :call VimuxSendKeys('C-d')
+  endif
+endfunction
+
+" Send register to Vimux
+function! SendRegister2Vimux()
+ :call PreSend2Vimux()
+ :call VimuxSendText(@+)
+ :call AfterSend2Vimux()
+endfunction
+
+" send block to REPL
 function! SendBlock2Vimux()
     let start = search('^##\+', 'bnW')
     let end = search('^##\+', 'nW')
@@ -112,17 +146,17 @@ function! SendBlock2Vimux()
         let end = end -1
      endif
      let lines = getline(start,end)
-     " Send ctr-o for ipython to use 1 cell
-     :call VimuxSendKeys('C-o')
+     :call PreSend2Vimux()
+  
      for line in lines
          if strlen(line)>0
              :call VimuxSendText(line)
 	     :call VimuxSendKeys('enter')
          endif
      endfor
-     :call VimuxSendKeys('enter')
+     :call AfterSend2Vimux()
 endfunction
-" Enter current line in runner
+" Send curent block (betwen ## .. ##) to runner (REPL)
 nnoremap <Leader>rb :call SendBlock2Vimux()<CR>
 nnoremap <Leader>rq :VimuxCloseRunner<CR>
 
@@ -141,8 +175,6 @@ map  <F10> :Make run <CR>         " Make run command
 
 map <F6> :let &bg=(&bg=='light'?'dark':'light')<cr>  " toggle bg lighnes
 "------------LSP-----------------------------------------------------------
-"Go to the defenition
-"
 nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> gh <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> grn <cmd>lua vim.lsp.buf.rename()<CR>
@@ -159,7 +191,6 @@ nnoremap <silent> gf <cmd>lua vim.lsp.buf.formatting()<CR>
 highlight MatchParen ctermfg=blue ctermbg=None " avoid 'cursor jumping' effect
 highlight LineNr ctermfg=DarkGrey ctermbg=None " line number highligh
 
-
 function! AutoTransparency()
   highlight clear CursorLine
   highlight Normal ctermbg=none
@@ -172,6 +203,7 @@ function! AutoTransparency()
 endfunction
 
 autocmd ColorScheme * call AutoTransparency() " Force transparency
+
 set t_Co=256                        " Support 256 colors
 colorscheme PaperColor              " Color Scheme
 set background=dark                 " Default background mode (light/dark)
@@ -181,13 +213,10 @@ set background=dark                 " Default background mode (light/dark)
 "-------------------Settings per file type--------------------------------------
 " --- Indents, tabs and line lenght for programming ---
 "
-autocmd FileType python,c,cpp,go,vimwiki,sh set nowrap     " Don't wrap lines in sources
-
 autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8
 \ formatoptions+=croq softtabstop=4 smartindent
 \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 
-autocmd FileType c,go,cpp,sh setlocal expandtab shiftwidth=2 tabstop=8 softtabstop=8 smartindent
 " ----------------------------------------------------------
 " --------------- Email editing -----------------------
 autocmd BufNewFile,BufRead /tmp/neomutt* set noautoindent filetype=mail wm=0 tw=78 nonumber digraph nolist
@@ -232,11 +261,6 @@ autocmd Filetype markdown,vimwiki
 \  syn region markdownLink matchgroup=markdownLinkDelimiter 
 \  start="(" end=")" keepend contained conceal contains=markdownUrl
 
-" -------------REPL--------------------------------------------------
-"  TODO
-" -------------------------------------------------------------------
-"
-"
 "  ---------LSP and Code Completion----------------------------------------
 set omnifunc=syntaxcomplete#Complete     " default omni completion
 set completeopt-=preview                 " No documentation preview
@@ -262,10 +286,5 @@ EOF
 
 " Folding for languages
 
-autocmd FileType c,cpp,r  set foldmethod=syntax
-"autocmd FileType c,cpp,r  set foldmethod=expr
-"  \ foldexpr=lsp#ui#vim#folding#foldexpr()
-"  \ foldtext=lsp#ui#vim#folding#foldtext()
-
-
-
+autocmd FileType python  set foldmethod=indent
+autocmd FileType c,cpp,r set foldmethod=syntax
