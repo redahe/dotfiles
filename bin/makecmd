@@ -1,0 +1,41 @@
+#!/bin/bash
+
+## Print the proper command to use in vim-dispatch :Dispatch call
+## So that vim will know right compiler error format
+## Usage:
+##  my_make file_path arguments
+##
+
+file_path="$1"
+shift
+
+if [ -e Makefile ] 
+then
+  #  If Makefile is present in current dir - just run make
+  echo "make"
+elif [ -e BUILD ]
+then
+  #  If Bazel build file is present in current dir - just run bazel build ...
+  echo "bazel build ..."
+elif [ "${file_path: -3}" == ".py" ]
+then                                                              
+  echo "pylint3 --output-format=text --msg-template='{path}:{line}:{column}:{C}: [{symbol}] {msg}' --reports=no $file_path"
+elif [ "${file_path: -2}" == ".c" ]
+then
+  echo "make ${file_path%.c}"
+elif [ "${file_path: -2}" == ".h" ]
+then
+  echo "gcc ${file_path%.h}"
+elif [ "${file_path: -2}" == ".R" ]
+then
+  echo "R -f $file_path"
+elif [ "${file_path: -4}" == ".pas" ]
+then
+  echo "fpc $file_path"
+elif [ "${file_path: -3}" == ".sh" ]
+then
+  echo "shellcheck -f gcc $file_path"
+else
+  # Return make by default
+  echo "make"
+fi

@@ -49,6 +49,7 @@ set shiftwidth=2
 set tabstop=8 
 set softtabstop=8 
 set smartindent
+set nohlsearch                   " No highlight for search
 
 set notimeout
 set ttimeout
@@ -170,8 +171,39 @@ nnoremap <leader>n :set invnumber<CR>
 nmap <C-f> :!fmin %:p:h<CR>       " Open file manager where the buffer is
 nmap <leader>f :!fmin %:p:h<CR>   " Open file manager where the buffer is
 
-map  <F9> :Make <CR>              " Make is an improved version of 'make' from tpope/vim-dispatch
-map  <F10> :Make run <CR>         " Make run command
+let g:dispatch_compilers = {'make': 'gcc',
+      \'pylint3': 'pylint',
+      \'fpc': 'fpc'}
+
+function Compile()
+  " This relies on makecmd script which detects 
+  " the proper command for vim-dispatch depending on the environment
+  " vim dispatch takes care for setting compiler to match the command
+  let shellcmd = 'makecmd '.expand('%')   
+  let command=system(shellcmd)
+  if v:shell_error
+      return 1
+  endif
+  :execute 'Dispatch'.' '.trim(command)
+endfunction
+
+function Run()
+  " This relies on runcmd script which detects 
+  " the proper command for vim-dispatch depending on environment
+  let shellcmd = 'runcmd '.expand('%')   
+  let command=system(shellcmd)
+  if v:shell_error
+      return 1
+  endif
+  :execute 'Start -wait=always'.' '.trim(command)
+endfunction
+
+
+
+
+map  <F9> :call Compile()<CR>
+map  <F10> :call Run()<CR>
+
 
 map <F6> :let &bg=(&bg=='light'?'dark':'light')<cr>  " toggle bg lighnes
 "------------LSP-----------------------------------------------------------
