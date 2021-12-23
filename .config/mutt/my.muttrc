@@ -21,6 +21,8 @@ macro index,pager Ml "<save-message>=../LocalStorage<return><return><check-stats
 
 macro index,pager Mr "<save-message>=Retained<return><return><check-stats>" "move mail to Retained"
 
+macro index,pager R ":setenv MUTT_REPLY_TO_RECRUITER=true<return><save-message>=Retained<return><return><previous-entry><reply><check-stats>:unsetenv MUTT_REPLY_TO_RECRUITER<return>" "Reply to recruiters and move to retained
+
 # Notmuch settings
 set nm_default_url = "notmuch://$HOME/.local/share/mail"
 

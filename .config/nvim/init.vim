@@ -57,10 +57,18 @@ set ttimeout
 filetype plugin on
 syntax on
 
+function! RealRPath()
+  return expand('%:.')
+endfunction
+
 "-------------Status Line Settings--------------------------------
 let g:lightline = {
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'relativepath', 'modified' ]],
+      \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'realrelpath', 'modified']],
+      \ },
+      \ 'component_function': {
+      \   'cwd': 'getcwd',
+      \   'realrelpath': 'RealRPath'
       \ },
       \ 'colorscheme': 'PaperColor'
       \ }
@@ -168,10 +176,10 @@ nnoremap <Leader>u :so ~/.config/nvim/init.vim<CR>
  " Show/hide line numbers
 nnoremap <leader>n :set invnumber<CR>
 
-nmap <C-f> :!fmin %:p:h<CR>       " Open file manager where the buffer is
-nmap <leader>f :!fmin %:p:h<CR>   " Open file manager where the buffer is
+nmap <C-f>:!fmin $PWD %:p:h<CR>      " Open file manager one side -workdir
+nmap <leader>f :!fmin $PWD %:p:h<CR>   " another side dir of current file
 
-let g:dispatch_compilers = {'make': 'gcc',
+let g:dispatch_compilers = {'gcc': 'gcc',
       \'pylint3': 'pylint',
       \'fpc': 'fpc'}
 
@@ -252,6 +260,17 @@ autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8
 " ----------------------------------------------------------
 " --------------- Email editing -----------------------
 autocmd BufNewFile,BufRead /tmp/neomutt* set noautoindent filetype=mail wm=0 tw=78 nonumber digraph nolist
+
+function! CheckRecruitmentReply()
+  if !empty($MUTT_REPLY_TO_RECRUITER)
+    :call cursor(8, 1)
+    :read ~/bin/recruiter_response.txt
+  endif
+endfunction
+
+autocmd BufNewFile,BufRead /tmp/neomutt* call CheckRecruitmentReply()
+
+
 
 " ------ vimwiki settings ----------------------------------------------------
 let g:vimwiki_folding = 'custom'

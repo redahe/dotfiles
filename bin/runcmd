@@ -22,16 +22,19 @@ then
   echo "python3 $file_path"
 elif [ "${file_path: -2}" == ".c" ]
 then
-  echo "./$file_path"
-elif [ "${file_path: -2}" == ".h" ]
-then
-  echo "gcc $file_path"
+  echo "gcc ${file_path} -o _exec && (./_exec ; rm _exec) " 
 elif [ "${file_path: -2}" == ".R" ]
 then
   echo "R -f $file_path"
+elif [ "${file_path: -3}" == ".go" ]
+then
+  echo "go run $file_path"
 elif [ "${file_path: -4}" == ".pas" ]
 then
-  echo "fpc $file_path"
+  echo "fpc -o_exec ${file_path} && (./_exec ; rm _exec) " 
+elif [ "${file_path: -3}" == ".pp" ]
+then
+  echo "fpc -o_exec ${file_path} && (./_exec ; rm _exec) " 
 elif [ "${file_path: -3}" == ".sh" ]
 then
   echo "./$file_path"

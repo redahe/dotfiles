@@ -1,1 +1,2 @@
-tmux popup -R vifm -K -E -w 65% -h 65%
+command=$(echo "vifm $@")
+tmux popup -K -E -w 85% -h 85% -R "${command}"

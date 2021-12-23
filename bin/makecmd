@@ -22,14 +22,20 @@ then
   echo "pylint3 --output-format=text --msg-template='{path}:{line}:{column}:{C}: [{symbol}] {msg}' --reports=no $file_path"
 elif [ "${file_path: -2}" == ".c" ]
 then
-  echo "make ${file_path%.c}"
+  echo "gcc -fsyntax-only ${file_path}"
 elif [ "${file_path: -2}" == ".h" ]
 then
-  echo "gcc ${file_path%.h}"
+  echo "gcc -fsyntax-only ${file_path}"
 elif [ "${file_path: -2}" == ".R" ]
 then
   echo "R -f $file_path"
+elif [ "${file_path: -3}" == ".go" ]
+then
+  echo "go build -o /dev/null $file_path"
 elif [ "${file_path: -4}" == ".pas" ]
+then
+  echo "fpc $file_path"
+elif [ "${file_path: -3}" == ".pp" ]
 then
   echo "fpc $file_path"
 elif [ "${file_path: -3}" == ".sh" ]
