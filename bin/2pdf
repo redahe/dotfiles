@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gs -sDEVICE=pdfwrite -o output.pdf /usr/share/ghostscript/9.26/lib/viewjpeg.ps -c "($@) viewJPEG"

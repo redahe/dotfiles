@@ -1,7 +1,7 @@
 # vim: filetype=neomuttrc
 
 # colorscheme
-source $HOME/.config/mutt/dracula.muttrc
+source $HOME/.config/mutt/my_colors.muttrc
 
 # check stats
 set mail_check_stats
@@ -9,6 +9,8 @@ set mail_check_stats_interval = 1
 
 # Edit headers when composing message
 set edit_headers=yes
+
+set sidebar_width = 25
 
 # Delete message from pager
 bind index,pager D delete-message
@@ -19,7 +21,7 @@ macro index,pager gr "<change-folder>=Retained<enter>" "go to Retained"
 
 macro index,pager Ml "<save-message>=../LocalStorage<return><return><check-stats>" "move mail to LocalStorage"
 
-macro index,pager Mr "<save-message>=Retained<return><return><check-stats>" "move mail to Retained"
+macro index,pager Mr "<save-message>=Retained<return><return>" "Move to Retained"
 
 macro index,pager R ":setenv MUTT_REPLY_TO_RECRUITER=true<return><save-message>=Retained<return><return><previous-entry><reply><check-stats>:unsetenv MUTT_REPLY_TO_RECRUITER<return>" "Reply to recruiters and move to retained
 
@@ -40,3 +42,4 @@ set mailcap_path="~/.config/mutt/mailcap"
 bind index,pager v  noop        
 macro index,pager v "<pipe-message>view_html_mail<return>" "view in browser"
 
+set date_format="%b-%d/%y %I:%M%p"

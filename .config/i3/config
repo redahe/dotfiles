@@ -43,7 +43,10 @@ bindsym $mod+b exec --no-startup-id /home/reda/scripts/open_bookmark.sh
 # Floating
 for_window [workspace=".*"] floating enable border normal
 for_window [class="mlterm"] floating disable border pixel 1
+for_window [class="Zathura"] floating disable border pixel 1
 for_window [class="Abrowser"] floating disable border pixel 1
+for_window [window_role="PictureInPicture"] floating enable border pixel 1
+for_window [window_role="Dialog"] floating enable border normal
 
 bindsym Mod1+Tab workspace next
 

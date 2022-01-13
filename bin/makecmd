@@ -41,7 +41,10 @@ then
 elif [ "${file_path: -3}" == ".sh" ]
 then
   echo "shellcheck -f gcc $file_path"
+elif [ "${file_path: -3}" == ".md" ]
+then
+  echo "pandoc -f markdown -t latex $file_path -o /dev/null"
 else
-  # Return make by default
+   # Return make by default
   echo "make"
 fi

@@ -27,7 +27,6 @@ set novisualbell                  " No bell
 set enc=utf-8	                  " Encoding UTF-8
 set ls=2                          " Always show status line
 set incsearch                     " Incremental search
-set wrap                          " Wrap long lines
 set linebreak                     " but not in the middle of the word
 " set hlsearch                      " Highlight all found items
 set nu	                            " Display line numbers
@@ -43,7 +42,8 @@ set foldlevel=99                  " Dont fold when open a file by default
 set splitright                    " Open splits on the right
 set cc=80                         " 80 column border
 set clipboard=unnamedplus         " using system clipboard
-set nowrap
+set nowrap                        " No wrap by default
+set breakindent                   " But when wrap preserve indentation
 set expandtab 
 set shiftwidth=2 
 set tabstop=8 
@@ -81,7 +81,6 @@ let g:VimuxCommandShell = 1
 let g:VimuxPromptString = "run>"
 "--------------Key bindings --------------------------------------------------
 nmap <space> <leader>
-imap <C-Space> <C-x><C-o>
 map <Leader><space> :pwd<CR>
 "--------------Buffers navigation----------------------------------------------
 nmap <C-p> :bp<CR>              " Previous buffer
@@ -99,6 +98,7 @@ map <Leader>\| :vsplit<CR>    " Divide window vertically
 map <Leader>- :split<CR>      " Divide window horizontaly
 
 map <C-q> :q<CR>
+
 "---------------QuckFix List navigation
 
 nnoremap <leader>[ :cp<CR>
@@ -113,7 +113,9 @@ nnoremap <Leader>ri :VimuxInspectRunner<CR>
 nnoremap <Leader>rp  :call SendRegister2Vimux()<CR>
 " Enter current line in runner
 nnoremap <Leader>rl :call VimuxOpenRunner()\| call VimuxSendText(getline('.'))\|call VimuxSendKeys('enter')<CR>
-
+" --------------------------autocompletion menu
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "<CR>"
+inoremap <expr> <C-space> pumvisible() ? "\<C-n>" : "<C-x><C-o>"
 
 " Pre-send command
 function! PreSend2Vimux()
@@ -176,8 +178,17 @@ nnoremap <Leader>u :so ~/.config/nvim/init.vim<CR>
  " Show/hide line numbers
 nnoremap <leader>n :set invnumber<CR>
 
-nmap <C-f>:!fmin $PWD %:p:h<CR>      " Open file manager one side -workdir
-nmap <leader>f :!fmin $PWD %:p:h<CR>   " another side dir of current file
+function! VifmPickFile()
+  let cmd = 'fmin --choose-files /tmp/vim_vifm_pick '.expand("$PWD ").expand('%:p:h')
+  let res = system(cmd)
+  let file_path = readfile('/tmp/vim_vifm_pick')
+  if !empty(file_path)
+    :execute 'e '.file_path[0]
+  endif
+endfunction
+
+nmap <F3> :call VifmPickFile()<CR>
+nmap <leader>f :call VifmPickFile()<CR>
 
 let g:dispatch_compilers = {'gcc': 'gcc',
       \'pylint3': 'pylint',
@@ -225,6 +236,7 @@ nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g[ <cmd>lua vim.diagnostic.goto_prev()<CR>
 nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
 nnoremap <silent> gf <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <silent> gD <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 
 " --- UI, Colors and highlighting
 

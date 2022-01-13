@@ -2,11 +2,21 @@
 
 TMP_DIR=`mktemp -d`
 
-function cleanup {      
+function cleanup {
   rm -rf "$TMP_DIR"
 }
 
-trap cleanup EXIT
-
-mhonarc --attachmentdir $TMP_DIR -single > $TMP_DIR/message.html
-w3m  "${TMP_DIR}/message.html"
+mhonarc\
+ --attachmentdir $TMP_DIR -single\
+| grep -v "<li><em>Arc-authentication-results"\
+| grep -v "<li><em>Arc-message-signature"\
+| grep -v "<li><em>Arc-seal"\
+| grep -v "<li><em>Dkim-signature"\
+| grep -v "<li><em>Authentication-results"\
+| grep -v "<li><em>Delivered-to"\
+| grep -v "<li><em>Feedback-id"\
+| grep -v "<li><em>List-help"\
+| grep -v "<li><em>List-id"\
+| grep -v "<li><em>Reply-to"\
+> $TMP_DIR/message.html
+(surf  "${TMP_DIR}/message.html" 2>/dev/null; cleanup)&

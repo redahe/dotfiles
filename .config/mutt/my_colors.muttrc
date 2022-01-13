@@ -1,0 +1,37 @@
+# vim: filetype=neomuttrc
+
+color normal black white
+color status color135 color233
+
+# Letter index
+color index color240 white ".*"
+color index_author black color253 ".*"
+color index_subject black white ".*"
+
+color index black color250  "~N"
+color index_author black color250 "~N"
+color index_subject blue color250 "~N"
+
+color index black color126 "~D"
+color index_author black color126 "~D"
+color index_subject black color126 "~D"
+
+color indicator color117 black
+
+# Sidebar
+color sidebar_highlight color117 black
+color sidebar_indicator blue color250
+
+# Message
+color header black color250 "^Date:"
+color header blue color250 "^From:"
+color header red color250 "^Subject:"
+color header black color250 "^To:"
+
+color quoted color132 white
+color signature green white
+color attachment color247 white
+
+color body red white "[\-\.+_a-zA-Z0-9]+@[\-\.a-zA-Z0-9]+" # email
+color body blue white "(http|https)://[^ \n]+"             # link
+
