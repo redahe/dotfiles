@@ -1,20 +1,33 @@
 " ------------Plugins------------------------------------------------
+"
 call plug#begin('~/build/vimplugins') " keep plugins in build dir
-	Plug 'flazz/vim-colorschemes'               " Color Schemes
+	Plug 'flazz/vim-colorschemes' " Color Schemes
 	Plug 'crusoexia/vim-monokai'
 
-	Plug 'itchyny/lightline.vim'                " Custom status line
-	Plug 'ap/vim-buftabline'                    " Buffers in tabline
+	Plug 'itchyny/lightline.vim'     " Custom status line
+	Plug 'ap/vim-buftabline'        " Buffers in tabline
 
-	Plug 'roxma/vim-tmux-clipboard'             " sync vimand tmux copy buffers
-	Plug 'tpope/vim-dispatch'                   " Dispatch make to parallel tmux window
-	Plug 'preservim/vimux'                      " Run commands in tmux-pane
+	Plug 'roxma/vim-tmux-clipboard' " sync vimand tmux copy buffers
+	Plug 'tpope/vim-dispatch'       " Dispatch make to parallel tmux window
+	Plug 'preservim/vimux'          " Run commands in tmux-pane
 
 	Plug 'vimwiki/vimwiki'                    
 
-	Plug 'neovim/nvim-lspconfig'                " Standard configs for lsp
+	Plug 'neovim/nvim-lspconfig'  " Standard configs for lsp
+
+        Plug 'SirVer/ultisnips'       " Snippet Engine
+        Plug 'honza/vim-snippets'     " Collection of snippets TODO make my own
+
+        Plug 'sakhnik/nvim-gdb'      " gdb,lldb,pdb,bashdb integration
+        " ----------------experimental---------------------
+        Plug 'preservim/vim-markdown'
+
 call plug#end()            " required
 
+" -------
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_fenced_languages = ['bash=sh']
 
 " ----------Settings--------------------------------------
 
@@ -105,6 +118,14 @@ nnoremap <leader>[ :cp<CR>
 nnoremap <leader>] :cn<CR>
 nnoremap <leader>q :ccl<CR>
   
+"-------------Snippets -----------------------
+
+let g:UltiSnipsExpandTrigger='<tab>'
+" shortcut to go to next position
+let g:UltiSnipsJumpForwardTrigger='<tab>'
+" shortcut to go to previous position
+let g:UltiSnipsJumpBackwardTrigger='<s-tab>'
+
 "---------------Runner window controls-----------------------------------------
 nnoremap <Leader>rc :VimuxPromptCommand<CR>
 nnoremap <Leader>rr :VimuxRunLastCommand<CR>
@@ -194,6 +215,9 @@ let g:dispatch_compilers = {'gcc': 'gcc',
       \'pylint3': 'pylint',
       \'fpc': 'fpc'}
 
+" Dont use tmux panes to dispatch make requests (or it will exit Zoom)
+let g:dispatch_no_tmux_make = 1
+
 function Compile()
   " This relies on makecmd script which detects 
   " the proper command for vim-dispatch depending on the environment
@@ -261,6 +285,7 @@ colorscheme PaperColor              " Color Scheme
 set background=dark                 " Default background mode (light/dark)
 
 
+hi! link BufTabLineActive TabLine
 
 "-------------------Settings per file type--------------------------------------
 " --- Indents, tabs and line lenght for programming ---
@@ -286,6 +311,9 @@ autocmd BufNewFile,BufRead /tmp/neomutt* call CheckRecruitmentReply()
 
 " ------ vimwiki settings ----------------------------------------------------
 let g:vimwiki_folding = 'custom'
+
+" Update calcurse entries after editing todo
+autocmd BufWritePost ~/vimwiki/TODO.md silent !update_calcurse.sh ~/vimwiki/TODO.md
 
 " Folding function from vimwiki doc for markdown
 function! VimwikiFoldLevelCustom(lnum)
@@ -328,8 +356,8 @@ autocmd Filetype markdown,vimwiki
 set omnifunc=syntaxcomplete#Complete     " default omni completion
 set completeopt-=preview                 " No documentation preview
 
-let g:SuperTabDefaultCompletionType="context"   " Enable filepath completion
-let g:SuperTabContextDefaultCompletionType="<c-x><c-o>" " Omni for rest
+" let g:SuperTabDefaultCompletionType="context"   " Enable filepath completion
+" let g:SuperTabContextDefaultCompletionType="<c-x><c-o>" " Omni for rest
 
 lua << EOF
 local on_attach = function(client, bufnr)
