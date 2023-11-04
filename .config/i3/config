@@ -13,11 +13,11 @@ set $mod Mod4
 
 #MY SETTINGS
 exec --no-startup-id xss-lock -l -- i3lock
-exec --no-startup-id feh --bg-scale ~/wallpapers/mononoke.jpg
+exec_always --no-startup-id feh --bg-scale ~/wallpapers/rhino-drawing-53.jpg
 exec --no-startup-id nm-applet
-exec --no-startup-id "setxkbmap -model pc105 -layout us,ru -option grp:ctrl_shift_toggle"
-exec_always --no-startup-id compton --config /home/reda/.compton.conf
-exec --no-startup-id udiskie -ans &
+exec --no-startup-id udiskie -ans
+exec_always --no-startup-id "setxkbmap -model pc105 -layout us,ru -option grp:ctrl_shift_toggle"
+# exec_always --no-startup-id compton --config /home/reda/.compton.conf
 new_window 1pixel
 
 bindsym $mod+Shift+g split v
@@ -36,7 +36,8 @@ bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-bindsym $mod+p exec scrot -e 'mv $f ~/screenshots/'
+# bindsym $mod+p exec scrot -e 'mv $f ~/screenshots/'
+bindsym --release $mod+p exec gnome-screenshot -a -f ~/screenshots/last.png
 bindsym $mod+o exec --no-startup-id /home/reda/scripts/open_link.sh
 bindsym $mod+b exec --no-startup-id /home/reda/scripts/open_bookmark.sh
 
@@ -45,8 +46,11 @@ for_window [workspace=".*"] floating enable border normal
 for_window [class="mlterm"] floating disable border pixel 1
 for_window [class="Zathura"] floating disable border pixel 1
 for_window [class="Abrowser"] floating disable border pixel 1
+for_window [class="abrowser"] floating disable border pixel 1
 for_window [window_role="PictureInPicture"] floating enable border pixel 1
 for_window [window_role="Dialog"] floating enable border normal
+no_focus [class="Sxiv" instance="preview"] 
+for_window [class="Sxiv" instance="preview"] floating enable border pixel 1
 
 bindsym Mod1+Tab workspace next
 
@@ -55,7 +59,7 @@ bindsym Mod1+Tab workspace next
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+font pango:monospace 10
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -82,7 +86,7 @@ bindsym $mod+m exec mlterm --geometry "100x32" -N file_manager -e vifm
 # kill focused window
 bindsym $mod+Shift+q kill
 # kill focused window
-bindsym $mod+q kill
+bindsym $mod+q exec i3lock --color=101010
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run

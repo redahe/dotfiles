@@ -67,6 +67,13 @@ set nohlsearch                   " No highlight for search
 set notimeout
 set ttimeout
 
+set spell spelllang=en_gb
+
+" Russian in Normal mode
+:set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz,Ж;:
+
+
+
 filetype plugin on
 syntax on
 
@@ -213,6 +220,7 @@ nmap <leader>f :call VifmPickFile()<CR>
 
 let g:dispatch_compilers = {'gcc': 'gcc',
       \'pylint3': 'pylint',
+      \'proselint': 'proselint',
       \'fpc': 'fpc'}
 
 " Dont use tmux panes to dispatch make requests (or it will exit Zoom)
