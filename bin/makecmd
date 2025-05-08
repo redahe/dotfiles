@@ -43,8 +43,12 @@ then
   echo "shellcheck -f gcc $file_path"
 elif [ "${file_path: -3}" == ".md" ]
 then
-  echo "pandoc -f markdown -t latex $file_path -o /dev/null"
+  echo "proselint $file_path"
+  # echo "pandoc -f markdown -t latex $file_path -o /dev/null"
+elif [ "${file_path: -4}" == ".tex" ]
+then
+  echo "pdflatex $file_path"
 else
-   # Return make by default
+    # Return make by default
   echo "make"
 fi

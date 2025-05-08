@@ -38,6 +38,9 @@ then
 elif [ "${file_path: -3}" == ".md" ]
 then
   echo "pandoc -f markdown -t latex --latex-engine=xelatex --variable mainfont='DejaVu Serif' -o _a.pdf ${file_path} && (zathura _a.pdf&; sleep 1; rm _a.pdf) " 
+elif [ "${file_path: -4}" == ".tex" ]
+then
+  echo "pdflatex --shell-escape ${file_path} && (zathura ${file_path%.tex}.pdf) " 
 elif [ "${file_path: -3}" == ".sh" ]
 then
   echo "./$file_path"
