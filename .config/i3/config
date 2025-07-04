@@ -40,6 +40,7 @@ bindsym $mod+Shift+l move right
 bindsym --release $mod+p exec gnome-screenshot -a -f ~/screenshots/last.png
 bindsym $mod+o exec --no-startup-id /home/reda/scripts/open_link.sh
 bindsym $mod+b exec --no-startup-id /home/reda/scripts/open_bookmark.sh
+bindsym $mod+u exec --no-startup-id autorandr
 
 # Floating
 for_window [workspace=".*"] floating enable border normal
@@ -52,6 +53,7 @@ for_window [window_role="Dialog"] floating enable border normal
 no_focus [class="Sxiv" instance="preview"] 
 for_window [class="Sxiv" instance="preview"] floating enable border pixel 1
 
+for_window [floating] move absolute position center
 bindsym Mod1+Tab workspace next
 
 #END OF MY SETTINGS
