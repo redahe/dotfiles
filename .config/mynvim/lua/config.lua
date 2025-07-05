@@ -20,6 +20,49 @@ vim.opt.rtp:prepend(lazypath)
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
+    {"nvim-treesitter/nvim-treesitter", 
+      branch = 'master', 
+      lazy = false, 
+      build = ":TSUpdate",
+      opts_extend = { "ensure_installed" },
+      opts = {
+        highlight = { enable = true },
+        indent = { enable = false },
+        ensure_installed = {
+            "asm",
+            "awk",
+            "bash",
+            "bibtex",
+            "c",
+            "cpp",
+            "cuda",
+            "diff",
+            "html",
+            "java",
+            "json",
+            "jsonc",
+            "lua",
+            "luap",
+            "markdown",
+            "markdown_inline",
+            "printf",
+            "python",
+            "pascal",
+            "query",
+            "regex",
+            "toml",
+            "sql",
+            "vim",
+            "vimdoc",
+            "xml",
+            "yaml",
+          },
+      },
+      ---@param opts TSConfig
+      config = function(_, opts)
+          require("nvim-treesitter.configs").setup(opts)
+      end,
+   },
    {
       lazy = true,
       "dstein64/vim-startuptime",
@@ -35,8 +78,6 @@ require("lazy").setup({
     'neovim/nvim-lspconfig',
     ft = {'c', 'cpp'},
     config = function()
-
-
         local on_attach = function(client, bufnr)
           local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
           local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -69,13 +110,80 @@ require("lazy").setup({
     end,
   },
   {
-    "UtkarshVerma/molokai.nvim",
+    "vimwiki/vimwiki",
+    init = function()
+      vim.cmd [[
+          let g:vimwiki_folding = 'custom'
+          " Parse TODO for appointments, update calcurse
+          autocmd BufWritePost ~/vimwiki/TODO.md silent !update_calcurse_apt.sh
+          " Parse Routines for appointments, update calcurse
+          autocmd BufWritePost ~/vimwiki/Routines.md silent !update_calcurse_apt.sh
+          " Parse next planned items and update calcurse TODO
+          autocmd BufWritePost ~/vimwiki/NextDaysPlans.md silent !update_calcurse_todo.sh
+          " Folding function from vimwiki doc for markdown
+          function! VimwikiFoldLevelCustom(lnum)
+              let pounds = strlen(matchstr(getline(a:lnum), '^#\+'))
+              if (pounds)
+                return '>' . pounds  " start a fold level
+             endif
+              if getline(a:lnum) =~? '\v^\s*$'
+                if (strlen(matchstr(getline(a:lnum + 1), '^#\+')))
+                  return '-1' " don't fold last blank line before header
+                endif
+              endif
+              return '=' " return previous fold level
+          endfunction
+          autocmd FileType vimwiki setlocal foldmethod=expr |
+               \ setlocal foldenable | set foldexpr=VimwikiFoldLevelCustom(v:lnum)
+          let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+          let g:vimwiki_global_ext = 0
+          let g:vimwiki_autowriteall = 0
+          autocmd FileType vimwiki setlocal syntax=markdown
+          autocmd FileType vimwiki setlocal foldlevel=1       " Fold ##-level headers
+
+          " -- Fold text
+          function! MyFoldText()
+              return substitute(getline(v:foldstart),"^ *","",1). '...             '
+          endfunction
+          set foldtext=MyFoldText()
+
+          " Conceal links
+          autocmd Filetype markdown,vimwiki
+          \  syn region markdownLink matchgroup=markdownLinkDelimiter
+          \  start="(" end=")" keepend contained conceal contains=markdownUrl
+      ]]
+    end,
+  },
+  --[[
+  {
+    'AlexvZyl/nordic.nvim',
     lazy = false,
     priority = 1000,
     config = function()
-        vim.cmd "colorscheme molokai"
+        require('nordic').load()
+    end
+  },
+  {
+    'flazz/vim-colorschemes',
+    lazy = false,
+    priority=1000,
+    config = function()
+      vim.cmd "colorscheme PaperColor"
     end,
   },
+  {
+    "yorik1984/newpaper.nvim",
+    priority=1000,
+    config=true,
+  },
+     "UtkarshVerma/molokai.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+        --vim.cmd "colorscheme molokai"
+    end,
+  },
+  --]]
   {
     "sakhnik/nvim-gdb",
     lazy = true,
@@ -111,7 +219,7 @@ require("lazy").setup({
   },
   install = {
     missing=false, 
-    colorscheme = { "habamax" } 
+    colorscheme = { "darkblue" } 
   },
   -- automatically check for plugin updates
   checker = { enabled = false },

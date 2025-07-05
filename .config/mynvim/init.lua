@@ -36,8 +36,10 @@ vim.o.ttimeout = true
 vim.o.spell = true
 vim.o.spelllang=en_gb
 
+vim.o.background=dark
+
 -- Syntax highlighting and filetype plugins
--- vim.cmd('syntax off')
+vim.cmd('syntax off')
 -- vim.cmd('filetype plugin indent off')
 
 -- -------------FUNCTIONS----------------
@@ -126,10 +128,12 @@ vim.api.nvim_set_keymap('n', '<Leader>q', ':ccl<CR>',
 -- FileManager
 vim.api.nvim_set_keymap('n', '<Leader>f', ':lua VifmPickFile()<CR>', 
                         { noremap = true, silent = true })
-
+-- Open vimwiki
+vim.api.nvim_set_keymap('n', '<Leader>ww', ':e ~/vimwiki/index.md<CR>', 
+                        { noremap = true, silent = true })
 
 -- Autocomplete in menu
--- Todo rewrite in lua
+-- TODO rewrite in lua
 vim.cmd [[
   inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "<CR>"
   inoremap <expr> <C-space> pumvisible() ? "\<C-n>" : "<C-x><C-o>"
@@ -140,11 +144,27 @@ vim.cmd [[
 vim.o.langmap='ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz,Ж;:'
 
 
+-- -------------EMAIL-------------------------------------------------------
+vim.cmd [[
+    autocmd BufNewFile,BufRead /tmp/neomutt* set noautoindent filetype=mail wm=0 tw=78 nonumber digraph nolist
+
+    function! CheckRecruitmentReply()
+      if !empty($MUTT_REPLY_TO_RECRUITER)
+        :call cursor(8, 1)
+        :read ~/bin/recruiter_response.txt
+      endif
+    endfunction
+
+    autocmd BufNewFile,BufRead /tmp/neomutt* call CheckRecruitmentReply()
+]]
 -- ------------PLUGINS------------------------------------------------------
+
 require("config")
 
 -- ------------UI MISCELLANEOUS------------------------------------------------------
 --
+vim.cmd "colorscheme unokai"
+
 -- Allow inline diagnostic messages
 vim.diagnostic.config({
   virtual_text = true
@@ -170,3 +190,4 @@ require('lualine').setup{
     lualine_z = {'location'}
   },
 }
+
