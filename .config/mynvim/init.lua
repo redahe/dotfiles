@@ -52,6 +52,7 @@ function VifmPickFile()
   ]]
 end
 
+-- Move the definitions to be lazy loaded when plugin is loaded
 function Compile()
   vim.cmd [[
      " This relies on makecmd script which detects
@@ -126,11 +127,14 @@ vim.api.nvim_set_keymap('n', '<Leader>q', ':ccl<CR>',
 vim.api.nvim_set_keymap('n', '<Leader>f', ':lua VifmPickFile()<CR>', 
                         { noremap = true, silent = true })
 
--- ToggleBreakpoint
-vim.api.nvim_set_keymap('n', '<Leader>b', ':GdbBreakpointToggle<CR>', 
-                        { noremap = true, silent = true })
 
--- TODO autocomplete in menu
+-- Autocomplete in menu
+-- Todo rewrite in lua
+vim.cmd [[
+  inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "<CR>"
+  inoremap <expr> <C-space> pumvisible() ? "\<C-n>" : "<C-x><C-o>"
+  inoremap <expr> <C-c> pumvisible() ? "\<C-n>" : "<C-x><C-o>"
+]]
 
 --Russian in Normal mode
 vim.o.langmap='ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz,Ж;:'
@@ -139,18 +143,18 @@ vim.o.langmap='ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKL
 -- ------------PLUGINS------------------------------------------------------
 require("config")
 
--- Dispatch hints
-vim.g.dispatch_compilers = {gcc='gcc',
-      pylint='pylint',
-      proselint='proselint',
-      fpc='fpc'}
--- Dont use tmux panes to dispatch make requests (or it will exit Zoom)
-vim.g.dispatch_no_tmux_make = 1
-
+-- ------------UI MISCELLANEOUS------------------------------------------------------
+--
+-- Allow inline diagnostic messages
+vim.diagnostic.config({
+  virtual_text = true
+})
+-- Buffer Line
 require("buftabline").setup {
   tab_format = " #{b}#{f} ",
 }
 
+-- StatusLine -----
 require('lualine').setup{ 
   options = {icons_enabled = false,
     theme = 'papercolor_dark',
@@ -166,7 +170,3 @@ require('lualine').setup{
     lualine_z = {'location'}
   },
 }
-
--- ----------- COLORS ------------------------------------------------------
-vim.cmd "colorscheme molokai"
---
