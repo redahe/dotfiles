@@ -43,6 +43,7 @@ require("lazy").setup({
             "jsonc",
             "lua",
             "luap",
+            "make",
             "markdown",
             "markdown_inline",
             "printf",

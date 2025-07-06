@@ -15,7 +15,7 @@ vim.o.tabstop=8                   -- Tab looks 8 spaces wide
 vim.o.smarttab = true             -- replace tab with spaces
 vim.o.hidden  = true              -- Allow change buffer without saving
 vim.o.cursorline = true           -- Highlight current line
-vim.o.synmaxcol=140               -- Limit syntax highlighting line length
+vim.o.synmaxcol=300               -- Limit syntax highlighting line length
 vim.o.foldlevel=99                -- Don't fold when open a file by default
 vim.o.splitright = true           -- Open splits on the right
 vim.o.cc='80'                      -- 80 column border
@@ -163,7 +163,7 @@ require("config")
 
 -- ------------UI MISCELLANEOUS------------------------------------------------------
 --
-vim.cmd "colorscheme unokai"
+vim.cmd "colorscheme ntune"
 
 -- Allow inline diagnostic messages
 vim.diagnostic.config({
