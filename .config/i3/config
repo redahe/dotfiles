@@ -13,11 +13,16 @@ set $mod Mod4
 
 #MY SETTINGS
 exec --no-startup-id xss-lock -l -- i3lock
-exec_always --no-startup-id feh --bg-scale ~/wallpapers/rhino-drawing-53.jpg
+#exec --no-startup-id xsetroot -solid "#8180AA"
+exec_always --no-startup-id feh --bg-scale ~/wallpapers/starship.png
 exec --no-startup-id nm-applet
 exec --no-startup-id udiskie -ans
-exec_always --no-startup-id "setxkbmap -model pc105 -layout us,ru -option grp:ctrl_shift_toggle"
-# exec_always --no-startup-id compton --config /home/reda/.compton.conf
+exec_always --no-startup-id ~/bin/restart_compton
+
+# Exit ibus and set keyboard layout
+exec --no-startup-id ibus exit
+exec_always --no-startup-id setxkbmap -model pc105 -layout us,ru -option grp:ctrl_shift_toggle
+
 new_window 1pixel
 
 bindsym $mod+Shift+g split v
@@ -40,13 +45,14 @@ bindsym $mod+Shift+l move right
 bindsym --release $mod+p exec gnome-screenshot -a -f ~/screenshots/last.png
 bindsym $mod+o exec --no-startup-id /home/reda/scripts/open_link.sh
 bindsym $mod+b exec --no-startup-id /home/reda/scripts/open_bookmark.sh
-bindsym $mod+u exec --no-startup-id autorandr
+bindsym $mod+u exec --no-startup-id autorandr -c
 
 # Floating
 for_window [workspace=".*"] floating enable border normal
 for_window [class="mlterm"] floating disable border pixel 1
 for_window [class="Zathura"] floating disable border pixel 1
 for_window [class="Abrowser"] floating disable border pixel 1
+for_window [class="Chromium"] floating disable border pixel 1
 for_window [class="abrowser"] floating disable border pixel 1
 for_window [window_role="PictureInPicture"] floating enable border pixel 1
 for_window [window_role="Dialog"] floating enable border normal
@@ -87,7 +93,7 @@ bindsym $mod+m exec mlterm --geometry "100x32" -N file_manager -e vifm
 
 # kill focused window
 bindsym $mod+Shift+q kill
-# kill focused window
+# Lock screen
 bindsym $mod+q exec i3lock --color=101010
 
 # start dmenu (a program launcher)
@@ -190,6 +196,16 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3status
-        tray_output primary
+   # colors {
+    #    background #AAAAAA
+    #    statusline #00000 #that neon blue
+    #    separator #252525
+
+    #    focused_workspace  #4c7899 #285577 #ffffff
+    #    active_workspace   #333333 #5f676a #ffffff
+    #    inactive_workspace #333333 #555555 #BBBBBB
+    #    urgent_workspace   #2f343a #900000 #ffffff
+    #}
+    status_command i3status
+    tray_output primary
 }
