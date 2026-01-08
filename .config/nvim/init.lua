@@ -96,9 +96,9 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':bn<CR>',
 vim.api.nvim_set_keymap('n', '<C-x>', ':bd<CR>', 
                         { noremap = true, silent = true })
 -- Config file
-vim.api.nvim_set_keymap('n', '<Leader>o', ':e ~/.config/mynvim/init.lua<CR>',
+vim.api.nvim_set_keymap('n', '<Leader>o', ':e ~/.config/nvim/init.lua<CR>',
                         { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<Leader>u', ':so ~/.config/mynvim/init.lua<CR>',
+vim.api.nvim_set_keymap('n', '<Leader>u', ':so ~/.config/nvim/init.lua<CR>',
                         { noremap = true, silent = true })
 -- Window navigation
 vim.api.nvim_set_keymap('n', '<Leader>|', ':vsplit<CR>',

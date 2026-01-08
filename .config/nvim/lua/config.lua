@@ -1,6 +1,7 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
---[[
+local plugin_dir = vim.fn.expand("$HOME/build/neovim_plugins/lazy")
+local lazypath = plugin_dir.."/lazy.nvim"
 --UNCOMMENT IF NEED TO INSTALL lazy from git
+--[[
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
   local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
@@ -19,6 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Setup lazy.nvim
 require("lazy").setup({
+  root = plugin_dir,
   spec = {
     {"nvim-treesitter/nvim-treesitter", 
       branch = 'master', 
@@ -106,7 +108,7 @@ require("lazy").setup({
           nnoremap <silent> g[ <cmd>lua vim.diagnostic.goto_prev()<CR>
           nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
           nnoremap <silent> gf <cmd>lua vim.lsp.buf.formatting()<CR>
-          nnoremap <silent> gD <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+          nnoremap <silent> gD <cmd>lua vim.diagnostic.open_float()<CR>
         ]]
     end,
   },
@@ -155,36 +157,6 @@ require("lazy").setup({
       ]]
     end,
   },
-  --[[
-  {
-    'AlexvZyl/nordic.nvim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-        require('nordic').load()
-    end
-  },
-  {
-    'flazz/vim-colorschemes',
-    lazy = false,
-    priority=1000,
-    config = function()
-      vim.cmd "colorscheme PaperColor"
-    end,
-  },
-  {
-    "yorik1984/newpaper.nvim",
-    priority=1000,
-    config=true,
-  },
-     "UtkarshVerma/molokai.nvim",
-    lazy = false,
-    priority = 1000,
-    config = function()
-        --vim.cmd "colorscheme molokai"
-    end,
-  },
-  --]]
   {
     "sakhnik/nvim-gdb",
     lazy = true,
