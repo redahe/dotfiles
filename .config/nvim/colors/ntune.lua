@@ -9,6 +9,9 @@ local hi = function(name, val)
   vim.api.nvim_set_hl(0, name, val)
 end
 
+-- Matching parenthesis often the most dysfunctional think
+hi('MatchParen', {fg='Magenta', ctermfg='Magenta'})
+
 -- Tab Line
 
 hi('TabLineFill', { ctermfg='Black', ctermbg='DarkGrey'})
